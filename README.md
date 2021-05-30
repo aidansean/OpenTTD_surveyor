@@ -39,7 +39,7 @@ Make an svg map of the tutorial map in dark mode:
 
 *Will it work with this really cool extension I'm using?*
 
-Probably not.
+Maybe. Maybe not. Who knows? Try it and find out!
 
 *I'm colour blind. Can you make it more colour blind friendly?*
 
