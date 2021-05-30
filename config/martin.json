@@ -2,8 +2,8 @@
     "ds": 25,
     "ocean_noise": 50,
 
-    "height_rgb_low": [255, 255, 225],
-    "height_rgb_high": [255, 255, 255],
+    "height_rgb_low": "white",
+    "height_rgb_high": "cornsilk",
 
     "road_tile_rgb": [255, 255, 225],
     "rail_rgb": [255, 255, 255],
