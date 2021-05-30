@@ -67,6 +67,16 @@ class CairoPainter:
         return do_nothing
 
     def load_rgb(self, rgb_name, default_value):
+        """
+        Update the settings, given a config file path.
+
+        :param rgb_name: The name to look up.
+        :type rgb_name: string.
+
+        :param default_value: A tuple of 3 ints for the RGB values.
+        :type default_value: (integer, integer, integer).
+        """
+
         value = self.load_settings.get(rgb_name, default_value)
 
         if isinstance(value, str):
@@ -102,8 +112,8 @@ class CairoPainter:
 
         self.ocean_noise = self.load_settings.get("ocean_noise", 50)
 
-        self.height_rgb_low = self.load_settings.get("height_rgb_low", (255, 255, 255))
-        self.height_rgb_high = self.load_settings.get("height_rgb_high", (200, 200, 200))
+        self.height_rgb_low = self.load_rgb("height_rgb_low", (255, 255, 255))
+        self.height_rgb_high = self.load_rgb("height_rgb_high", (200, 200, 200))
 
         self.road_tile_rgb = self.load_rgb("road_tile_rgb", (100, 100, 100))
         self.rail_rgb = self.load_rgb("rail_rgb", (255, 255, 255))

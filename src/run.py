@@ -16,6 +16,7 @@ def main():
     random.seed(123)
 
     default_config_path = "config/main.json"
+    default_tile_size = 51
 
     argparser = argparse.ArgumentParser(description='Make a map of an OpenTTD save.')
     argparser.add_argument(
@@ -46,7 +47,7 @@ def main():
     argparser.add_argument(
         "-s", "--tile_size",
         help="Size of the tile. Should be an odd integer. May be ignored for very large maps.",
-        default=51,
+        default=default_tile_size,
         type=int)
     argparser.add_argument(
         "-v", "--verbose",
@@ -72,6 +73,8 @@ def main():
     if tile_size % 2 == 0:
         tile_size = tile_size - 1
     tile_size = max(tile_size, 5)
+    if tile_size == default_tile_size:
+        tile_size = None
 
     if args.output_filename:
         output_filename = args.output_filename
