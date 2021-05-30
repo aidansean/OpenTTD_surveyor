@@ -2,6 +2,9 @@
     "ds": 25,
     "ocean_noise": 50,
 
+    "height_rgb_low": [0, 0, 0],
+    "height_rgb_high": [55, 55, 55],
+
     "road_tile_rgb": [25, 25, 25],
     "rail_rgb": [255, 255, 255],
     "road_rgb": [50, 50, 50],

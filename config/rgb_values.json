@@ -1,0 +1,13 @@
+{
+    "tfl_bakerloo": [178, 99, 0],
+    "tfl_central": [220, 36, 31],
+    "tfl_circle": [255, 211, 41],
+    "tfl_district": [0, 125, 50],
+    "tfl_handc": [244, 169, 190],
+    "tfl_jubilee": [161, 165, 167],
+    "tfl_metropolitan": [155, 0, 88],
+    "tfl_norther": [0, 0, 0],
+    "tfl_piccadilly": [0, 25, 168],
+    "tfl_victoria": [0, 152, 216],
+    "tfl_wandc": [147, 206, 186]
+}
