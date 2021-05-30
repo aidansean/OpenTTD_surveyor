@@ -37,17 +37,22 @@ Make an svg map of the tutorial map in dark mode:
 
 ## Questions
 
-Will it work with this really cool extension I'm using?
+*Will it work with this really cool extension I'm using?*
+
 Probably not.
 
-I'm colour blind. Can you make it more colour blind friendly?
+*I'm colour blind. Can you make it more colour blind friendly?*
+
 Maybe... Pretty much all the colours are specified in the config files, so you should be able to change the colours there to something more friendly.
 
-It takes to generate a map for a very large save game.
+*It takes to generate a map for a very large save game.*
+
 Yes, it will do. You can use the -p option to show progress bars and -v option to give verbose output, and find out where it's taking a long time.
 
-Can I use this on Window?
+*Can I use this on Windows?*
+
 I don't have a Windows machine, so I can't help with that, I'm afraid. Anywhere you can use python and can install cairo should work.
 
-This repo is poorly coded and the maps are buggy!
+*This repo is poorly coded and the maps are buggy!*
+
 Probably. Help out by forking it and opening a PR :)
