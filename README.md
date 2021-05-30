@@ -11,10 +11,12 @@ On a mac you can do:
 
 Create a virtualenv and install the requirements:
 
+```
 > python3 -m venv venv
 > source venv/bin/activate
 > pip install --upgrade pip
 > pip install -r requirements.txt
+```
 
 ## Use
 
