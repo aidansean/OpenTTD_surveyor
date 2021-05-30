@@ -21,6 +21,13 @@ Create a virtualenv and install the requirements:
 > pip install -r requirements.txt
 ```
 
+Then clone the repo and change dir:
+
+```
+git clone git@github.com:aidansean/OpenTTD_surveyor.git
+cd OpenTTD_surveyor
+```
+
 ## Use
 
 Then you should be able to use the tool to make some maps!
