@@ -64,3 +64,10 @@ Maybe... Pretty much all the colours are specified in the config files, so you s
 *This repo is poorly coded and the maps are buggy!*
 
 Probably. Help out by forking it and opening a PR :)
+
+## Screenshots
+
+Here's the sort of thing it can do:
+
+![GitHub Logo](/example_images/tiny.png)
+Format: ![An exampe of the tiny test map](/example_images/tiny.png)
