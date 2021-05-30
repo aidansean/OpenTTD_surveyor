@@ -1,0 +1,40 @@
+{
+    "ds": 25,
+    "ocean_noise": 50,
+
+    "road_tile_rgb": [100, 100, 100],
+    "rail_rgb": [255, 255, 255],
+    "road_rgb": [50, 50, 50],
+    "tram_rgb": [255, 255, 255],
+
+    "railway_rgb": [255, 255, 255],
+    "electrified_railway_rgb": [200, 200, 200],
+    "monorail_rgb": [150, 150, 150],
+    "maglev_rgb": [100, 100, 100],
+
+    "town_building_rgb": [150, 150, 150],
+    "void_rgb": [255, 255, 255],
+    "industry_rgb": [255, 165, 0],
+    "industry_edge_rgb": [0, 0, 0],
+    "torb_rgb": [150, 150, 150],
+    "objects_rgb": [150, 150, 150],
+    "torb_edge_rgb": [0, 100, 100],
+
+    "station_rgb": [255, 0, 255],
+    "rail_station_rgb": [255, 0, 255],
+    "bus_station_rgb": [255, 50, 255],
+    "truck_station_rgb": [255, 100, 255],
+    "airport_rgb": [255, 255, 0],
+    "seaport_rgb": [0, 255, 255],
+    "heliport_rgb": [0, 255, 255],
+
+    "rail_depot_rgb": [0, 100, 100],
+    "road_depot_rgb": [0, 100, 100],
+    "ship_depot_rgb": [0, 100, 100],
+
+    "rail_width": 50,
+    "road_width": 50,
+    "bridge_edge_width": 50,
+
+    "screen_mode": "normal"
+}

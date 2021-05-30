@@ -1,0 +1,4 @@
+alive_progress
+pillow
+pycairo
+
