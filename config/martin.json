@@ -1,0 +1,65 @@
+{
+    "ds": 25,
+    "ocean_noise": 50,
+
+    "height_rgb_low": [255, 255, 225],
+    "height_rgb_high": [255, 255, 255],
+
+    "road_tile_rgb": [255, 255, 225],
+    "rail_rgb": [255, 255, 255],
+    "road_rgb": [50, 50, 50],
+    "tram_rgb": [0, 125, 50],
+
+    "railway_rgb": [255, 255, 255],
+    "electrified_railway_rgb": [255, 255, 150],
+    "monorail_rgb": [150, 150, 150],
+    "maglev_rgb": [100, 100, 100],
+
+    "town_building_rgb": [225, 225, 225],
+    "void_rgb": [255, 255, 255],
+    "industry_rgb": [150, 150, 175],
+    "industry_edge_rgb": [0, 0, 0],
+    "torb_rgb": [150, 150, 150],
+    "objects_rgb": [150, 150, 150],
+    "torb_edge_rgb": [0, 100, 100],
+    "water_edge_rgb": [114, 211, 243],
+
+    "station_rgb": [255, 0, 255],
+    "rail_station_rgb": [0, 0, 0],
+    "bus_station_rgb": [255, 255, 255],
+    "truck_station_rgb": [200, 200, 200],
+    "airport_rgb": "plum",
+    "seaport_rgb": [0, 255, 255],
+    "heliport_rgb": [0, 255, 255],
+
+    "rail_depot_rgb": [0, 100, 100],
+    "road_depot_rgb": [100, 100, 100],
+    "ship_depot_rgb": [0, 100, 100],
+
+    "rail_width": 50,
+    "road_width": 50,
+    "bridge_edge_width": 50,
+
+    "screen_mode": "martin",
+    "reverse_track_rgb": true,
+    "show_signals": false,
+
+    "player_colors": [
+        "tfl_metropolitan",
+        "tfl_circle",
+        "tfl_central",
+        "tfl_victoria",
+        [0, 200, 200],
+        [200, 0, 200],
+        [200, 200, 0],
+        [0, 100, 100],
+        [100, 0, 100],
+        [100, 100, 0],
+        [200, 200, 200],
+        [100, 100, 100],
+        [50, 50, 50],
+        [0, 0, 0],
+        [0, 200, 0],
+        [0, 100, 0]
+    ]
+}

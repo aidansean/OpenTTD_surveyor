@@ -1,6 +1,7 @@
 import json
 import math
 import random
+import webcolors
 
 from alive_progress import alive_bar
 import cairo
@@ -65,6 +66,20 @@ class CairoPainter:
             return alive_bar(len(tiles))
         return do_nothing
 
+    def load_rgb(self, rgb_name, default_value):
+        value = self.load_settings.get(rgb_name, default_value)
+
+        if isinstance(value, str):
+            if value in self.load_settings_rgb_values:
+                return self.load_settings_rgb_values[value]
+
+            try:
+                return webcolors.name_to_rgb(value)
+            except ValueError:
+                return (0, 0, 0)
+
+        return value
+
     def load_settings(self, file_path, tile_size):
         """
         Update the settings, given a config file path.
@@ -76,45 +91,65 @@ class CairoPainter:
         :type tile_size: integer.
         """
 
-        with open(file_path) as file_handle:
-            settings = json.load(file_handle)
+        with open("config/rgb_values.json") as file_handle:
+            self.load_settings_rgb_values = json.load(file_handle)
 
-        self.ds = settings.get("ds", 25)
+        with open(file_path) as file_handle:
+            self.load_settings = json.load(file_handle)
+
+        self.ds = self.load_settings.get("ds", 25)
         self.ss = 2 * self.ds
 
-        self.ocean_noise = settings.get("ocean_noise", 50)
+        self.ocean_noise = self.load_settings.get("ocean_noise", 50)
 
-        self.road_tile_rgb = settings.get("road_tile_rgb", (100, 100, 100))
-        self.rail_rgb = settings.get("rail_rgb", (255, 255, 255))
-        self.road_rgb = settings.get("road_rgb", (255, 255, 255))
-        self.tram_rgb = settings.get("tram_rgb", (255, 255, 255))
+        self.height_rgb_low = self.load_settings.get("height_rgb_low", (255, 255, 255))
+        self.height_rgb_high = self.load_settings.get("height_rgb_high", (200, 200, 200))
 
-        self.railway_rgb = settings.get("railway_rgb", (255, 255, 255))
-        self.electrified_railway_rgb = settings.get("electrified_railway_rgb", (200, 200, 200))
-        self.monorail_rgb = settings.get("monorail_rgb", (150, 150, 150))
-        self.maglev_rgb = settings.get("maglev_rgb", (100, 100, 100))
+        self.road_tile_rgb = self.load_rgb("road_tile_rgb", (100, 100, 100))
+        self.rail_rgb = self.load_rgb("rail_rgb", (255, 255, 255))
+        self.road_rgb = self.load_rgb("road_rgb", (255, 255, 255))
+        self.tram_rgb = self.load_rgb("tram_rgb", (255, 255, 255))
 
-        self.town_building_rgb = settings.get("town_building_rgb", (255, 255, 255))
-        self.industry_rgb = settings.get("industry_rgb", (255, 165, 0))
-        self.industry_edge_rgb = settings.get("industry_edge_rgb", (0, 0, 0))
-        self.torb_rgb = settings.get("torb_rgb", (150, 150, 150))
-        self.objects_rgb = settings.get("objects_rgb", (150, 150, 150))
-        self.torb_edge_rgb = settings.get("torb_edge_rgb", (0, 100, 100))
+        self.railway_rgb = self.load_rgb("railway_rgb", (100, 100, 100))
+        self.electrified_railway_rgb = self.load_rgb("electrified_railway_rgb", (200, 200, 200))
+        self.monorail_rgb = self.load_rgb("monorail_rgb", (150, 150, 150))
+        self.maglev_rgb = self.load_rgb("maglev_rgb", (100, 100, 100))
 
-        self.station_rgb = settings.get("station_rgb", (255, 0, 255))
-        self.rail_station_rgb = settings.get("rail_station_rgb", (255, 0, 255))
-        self.bus_station_rgb = settings.get("bus_station_rgb", (255, 0, 255))
-        self.truck_station_rgb = settings.get("truck_station_rgb", (255, 0, 255))
-        self.airport_rgb = settings.get("airport_rgb", (255, 255, 0))
-        self.seaport_rgb = settings.get("seaport_rgb", (0, 255, 255))
-        self.heliport_rgb = settings.get("heliport_rgb", (255, 255, 0))
+        self.town_building_rgb = self.load_rgb("town_building_rgb", (255, 255, 255))
+        self.industry_rgb = self.load_rgb("industry_rgb", (255, 165, 0))
+        self.industry_edge_rgb = self.load_rgb("industry_edge_rgb", (0, 0, 0))
+        self.torb_rgb = self.load_rgb("torb_rgb", (150, 150, 150))
+        self.objects_rgb = self.load_rgb("objects_rgb", (150, 150, 150))
+        self.torb_edge_rgb = self.load_rgb("torb_edge_rgb", (0, 100, 100))
+        self.water_edge_rgb = self.load_rgb("water_edge_rgb", (0, 0, 255))
 
-        self.rail_depot_rgb = settings.get("rail_depot_rgb", (0, 100, 100))
-        self.road_depot_rgb = settings.get("road_depot_rgb", (0, 100, 100))
-        self.ship_depot_rgb = settings.get("ship_depot_rgb", (0, 100, 100))
+        self.station_rgb = self.load_rgb("station_rgb", (255, 0, 255))
+        self.rail_station_rgb = self.load_rgb("rail_station_rgb", (255, 0, 255))
+        self.bus_station_rgb = self.load_rgb("bus_station_rgb", (255, 0, 255))
+        self.truck_station_rgb = self.load_rgb("truck_station_rgb", (255, 0, 255))
+        self.airport_rgb = self.load_rgb("airport_rgb", (255, 255, 0))
+        self.seaport_rgb = self.load_rgb("seaport_rgb", (0, 255, 255))
+        self.heliport_rgb = self.load_rgb("heliport_rgb", (255, 255, 0))
 
-        self.screen_mode = settings.get("screen_mode", "normal")
-        self.player_colors = settings.get("player_colors", self.player_colors)
+        self.rail_depot_rgb = self.load_rgb("rail_depot_rgb", (0, 100, 100))
+        self.road_depot_rgb = self.load_rgb("road_depot_rgb", (0, 100, 100))
+        self.ship_depot_rgb = self.load_rgb("ship_depot_rgb", (0, 100, 100))
+
+        self.screen_mode = self.load_settings.get("screen_mode", "normal")
+        self.player_colors = self.load_settings.get("player_colors", self.player_colors)
+        self.reverse_track_rgb = self.load_settings.get("reverse_track_rgb", False)
+        self.show_signals = self.load_settings.get("show_signals", True)
+
+        for index, rgb in enumerate(self.player_colors):
+            if not isinstance(rgb, str):
+                continue
+            if rgb in self.load_settings_rgb_values:
+                self.player_colors[index] = self.load_settings_rgb_values[rgb]
+            else:
+                try:
+                    self.player_colors[index] = webcolors.name_to_rgb(rgb)
+                except ValueError:
+                    self.player_colors[index] = (0, 0, 0)
 
         if tile_size:
             self.ss = tile_size
@@ -359,6 +394,9 @@ class CairoPainter:
         :type tile: TileObject
         """
 
+        if self.screen_mode == "martin":
+            return
+
         rgb = self.player_colors[tile.owner]
         self.draw_square(tile, rgb)
 
@@ -393,19 +431,28 @@ class CairoPainter:
 
         do_draw_inner = line_mode in ["inner", "both"]
         do_draw_outer = line_mode in ["outer", "both"]
-        if do_draw_outer:
-            fills = [
+
+        outer_rgbs = [
                 self.railway_rgb,
                 self.electrified_railway_rgb,
                 self.monorail_rgb,
                 self.maglev_rgb
             ]
+        outer_rgb = outer_rgbs[track_type]
+        inner_rgb = self.player_colors[owner]
+
+        if self.reverse_track_rgb:
+            inner_rgb = outer_rgbs[track_type]
+            outer_rgb = self.player_colors[owner]
+
+        if do_draw_outer:
+            rgb = outer_rgb
             self.draw_line(
-                x1, y1, x2, y2, fills[track_type], 2.5 * self.rail_width, round_cap
+                x1, y1, x2, y2, rgb, 2.5 * self.rail_width, round_cap
             )
 
         if do_draw_inner:
-            rgb = self.player_colors[owner]
+            rgb = inner_rgb
             self.draw_line(x1, y1, x2, y2, rgb, self.rail_width, round_cap)
 
     def draw_rail_XY(self, tile, rotation, line_mode="outer"):
@@ -874,8 +921,13 @@ class CairoPainter:
 
         tw = self.tram_width
         rgb = self.tram_rgb
+
         if owner is not None:
             rgb = self.player_colors[owner]
+
+        if self.screen_mode == "martin":
+            rgb = self.tram_rgb
+
         self.draw_line(x1, y1, x2, y2, rgb, tw, round_cap)
 
     def draw_road_NSEW(self, tile, rotation, line_mode, round_cap):
@@ -1261,8 +1313,11 @@ class CairoPainter:
         d = self.ds + 0.5
         ew = self.edge_width
         dew = (ew - 1) // 2
+
         rgb = self.industry_edge_rgb
-        if owner is not None:
+        if owner == "water":
+            rgb = self.water_edge_rgb
+        elif owner is not None:
             rgb = self.player_colors[owner]
 
         self.transform_to_tile(tile, rotation)
@@ -1306,6 +1361,19 @@ class CairoPainter:
 
         self.draw_tile_edge(tile, rotation, tile.owner)
 
+    def draw_water_edge(self, tile, rotation):
+        """
+        Draw the edge of a water tile.
+
+        :param tile: The current tile.
+        :type tile: integer
+
+        :param rotation: The direction of the edge, in the range [0, 7].
+        :type rotation: integer
+        """
+
+        self.draw_tile_edge(tile, rotation, "water")
+
     def draw_industry_edges(self, tile, tiles):
         """
         Draw all the edges of an industry tile.
@@ -1348,6 +1416,25 @@ class CairoPainter:
             if is_same_station:
                 continue
             self.draw_station_edge(tile, direction)
+
+    def draw_water_edges(self, tile, tiles):
+        """
+        Draw all the edges of a water tile.
+
+        :param tile: The current tile.
+        :type tile: integer
+
+        :param tiles: The list of all TileObjects in the map.
+        :type tiles: list of TileObject.
+        """
+
+        for direction in range(8):
+            other_tile = self.parent.tile_grid.get_tile_dir(tile, direction)
+            if not other_tile:
+                continue
+            if other_tile.kind == 6:
+                continue
+            self.draw_water_edge(tile, direction)
 
     def make_industry_shapes(self, industry_tiles):
         """
@@ -1415,14 +1502,16 @@ class CairoPainter:
 
             rgb_rand_1 = random.randint(0, self.ocean_noise)
 
-            rgb_h = 255 - 55 * h_index
-            if self.screen_mode == "dark":
-                rgb_h = 55 * h_index
-            height_rgb = (rgb_h, rgb_h, rgb_h)
+            height_rgb = [0, 0, 0]
+            height_rgb[0] = self.height_rgb_low[0] + h_index * (self.height_rgb_high[0] - self.height_rgb_low[0])
+            height_rgb[1] = self.height_rgb_low[1] + h_index * (self.height_rgb_high[1] - self.height_rgb_low[1])
+            height_rgb[2] = self.height_rgb_low[2] + h_index * (self.height_rgb_high[2] - self.height_rgb_low[2])
 
             water_rgb = (rgb_rand_1, rgb_rand_1, 255)
             if self.screen_mode == "dark":
                 water_rgb = (rgb_rand_1 // 2, rgb_rand_1 // 2, 150)
+            if self.screen_mode == "martin":
+                water_rgb = (195 + rgb_rand_1 * 0.5, 234 + rgb_rand_1 * 0.5, 251)
 
             fillColors = [
                 height_rgb,              # Ground
@@ -1747,6 +1836,24 @@ class CairoPainter:
 
             self.draw_industry_edges(tile, all_tiles)
 
+    def draw_water_tiles(self, tiles, all_tiles):
+        """
+        Draw the water tiles.
+
+        :param tiles: The list of water TileObjects in the map.
+        :type tiles: list of TileObject.
+
+        :param all_tiles: The list of all TileObjects in the map.
+        :type all_tiles: list of TileObject.
+        """
+
+        abar = self.get_progress_bar(tiles)
+
+        for tile in tiles:
+            abar()
+
+            self.draw_water_edges(tile, all_tiles)
+
     def draw_building_tiles(self, tiles):
         """
         Draw the industry tiles.
@@ -1885,6 +1992,7 @@ class CairoPainter:
         road_tiles = [t for t in all_tiles if t.kind == 2]
         building_tiles = [t for t in all_tiles if t.kind == 3]
         stations_tiles = [t for t in all_tiles if t.kind == 5]
+        water_tiles = [t for t in all_tiles if t.kind == 6]
         industry_tiles = [t for t in all_tiles if t.kind == 8]
         torb_tiles = [t for t in all_tiles if t.kind == 9]
 
@@ -1912,6 +2020,9 @@ class CairoPainter:
         self.log_message("Drawing industry tiles.")
         self.draw_industry_tiles(industry_tiles, all_tiles)
 
+        self.log_message("Drawing water tiles.")
+        self.draw_water_tiles(water_tiles, all_tiles)
+
         self.log_message("Drawing road tiles.")
         self.draw_road_tile_lines(road_tiles, line_mode="inner")
 
@@ -1921,8 +2032,9 @@ class CairoPainter:
         self.log_message("Drawing rail tiles.")
         self.draw_rail_tile_lines(rail_tiles, line_mode="inner")
 
-        self.log_message("Drawing rail signals.")
-        self.draw_rail_signals(rail_tiles)
+        if self.show_signals:
+            self.log_message("Drawing rail signals.")
+            self.draw_rail_signals(rail_tiles)
 
         self.log_message("Drawing bridges over tiles.")
         self.draw_bridges_over(all_tiles)
