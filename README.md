@@ -69,5 +69,6 @@ Probably. Help out by forking it and opening a PR :)
 
 Here's the sort of thing it can do:
 
-![GitHub Logo](/example_images/tiny.png)
-Format: ![An exampe of the tiny test map](/example_images/tiny.png)
+![Normal mode example](/example_images/tiny_normal_mode.png)
+
+![Dark mode example](/example_images/tiny_dark_mode.png)
