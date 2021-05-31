@@ -1,5 +1,5 @@
 # OpenTTD Surveyor
-A tool for making map images from OpenTTD save games. This is not part of the main OpenTTD codebase, nor is it ever intended to be part of it. This project was written in python to parse save game files to make maps.
+A tool for making map images from OpenTTD save games. This is not part of the main OpenTTD codebase, nor is it ever intended to be part of it. This project was written in python to parse save game files to make maps. At the time of writing, it only supports save files up to version 34.
 
 ## Installation
 
