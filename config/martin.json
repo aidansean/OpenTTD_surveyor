@@ -42,19 +42,21 @@
 
     "screen_mode": "martin",
     "reverse_track_rgb": true,
-    "show_signals": false,
+
+    "show_signals": true,
+    "show_roads": true,
 
     "player_colors": [
         "tfl_metropolitan",
         "tfl_circle",
         "tfl_central",
         "tfl_victoria",
-        [0, 200, 200],
-        [200, 0, 200],
-        [200, 200, 0],
-        [0, 100, 100],
-        [100, 0, 100],
-        [100, 100, 0],
+        "tfl_district",
+        "tfl_handc",
+        "tfl_jubilee",
+        "tfl_northern",
+        "tfl_piccadilly",
+        "tfl_wandc",
         [200, 200, 200],
         [100, 100, 100],
         [50, 50, 50],
