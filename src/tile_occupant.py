@@ -243,7 +243,7 @@ class TileOccupantIndustry(TileOccupant):
 
         try:
             self.industry_type = INDUSTRY_TYPES[self.parse_map_bits(b'MAP5', 0, 8)]
-        except:
+        except IndexError:
             self.industry_type = "OTHER_INDUSTRY"
 
         self.industry_id = self.parse_map_bits(b'MAP2', 0, 8)

@@ -1669,7 +1669,7 @@ class CairoPainter:
         if self.parent.show_progress_bar:
             with alive_bar(len(tiles)) as abar:
                 for tile in tiles:
-                    process_tile(tile ,line_mode)
+                    process_tile(tile, line_mode)
                     abar()
         else:
             for tile in tiles:
