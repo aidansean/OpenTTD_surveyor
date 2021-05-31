@@ -42,6 +42,29 @@ Make an svg map of the tutorial map in dark mode:
 > python src/run.py -m svg -v -d -i example_saves/Tutorial.sav
 ```
 
+## Docker
+
+You can also use docker to run the tool to avoid installing dependencies on your
+host PC (instead you need to "only" install docker).
+
+Follow the relevant instructions to install docker on your system:
+https://docs.docker.com/engine/install/
+
+Clone the repo and change dir as mentioned above.
+
+Build the docker image:
+```
+docker build . -t openttd_surveyor
+```
+
+And run the tool:
+```
+docker run --rm -v "${PWD}/example_saves":/save -v "${PWD}/example_images":/image openttd_surveyor -m png -v -o /image -i "/save/tiny.sav"
+```
+
+Change `${PWD}/example_saves` to the location of your savegames and
+`${PWD}/example_images` to the location you want to output the images.
+
 ## Questions
 
 *It takes ages to generate a map for a very large save game.*
