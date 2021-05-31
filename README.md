@@ -24,8 +24,8 @@ Create a virtualenv and install the requirements:
 Then clone the repo and change dir:
 
 ```
-git clone git@github.com:aidansean/OpenTTD_surveyor.git
-cd OpenTTD_surveyor
+> git clone git@github.com:aidansean/OpenTTD_surveyor.git
+> cd OpenTTD_surveyor
 ```
 
 ## Use
