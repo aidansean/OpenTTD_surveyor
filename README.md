@@ -69,6 +69,8 @@ Probably. Help out by forking it and opening a PR :)
 
 Here's the sort of thing it can do:
 
+![Normal mode example](/example_images/martin_250.png)
+
 ![Normal mode example](/example_images/tiny_normal_mode.png)
 
 ![Dark mode example](/example_images/tiny_dark_mode.png)
