@@ -15,7 +15,7 @@ def main():
 
     random.seed(123)
 
-    default_config_path = "config/main.json"
+    default_config_path = "config/martin.json"
     default_tile_size = 51
 
     argparser = argparse.ArgumentParser(description='Make a map of an OpenTTD save.')
