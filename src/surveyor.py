@@ -38,6 +38,11 @@ class Surveyor:
         self.file_type = self.raw_source[0:4]
         self.file_version = int.from_bytes(self.raw_source[5:8], "little")
         self.log_message(f"Save file version: {self.file_version}")
+        if self.file_version > 34:
+            self.log_message(
+                f"The save file version ({self.file_version}) may not be compatible.",
+                level=logging.WARNING
+            )
 
         if compression == "lzma":
             self.data = lzma.decompress(self.raw_source[8:])
