@@ -136,7 +136,9 @@ class CairoPainter:
         self.screen_mode = self.load_settings.get("screen_mode", "normal")
         self.player_colors = self.load_settings.get("player_colors", self.player_colors)
         self.reverse_track_rgb = self.load_settings.get("reverse_track_rgb", False)
+
         self.show_signals = self.load_settings.get("show_signals", True)
+        self.show_roads = self.load_settings.get("show_roads", True)
 
         for index, rgb in enumerate(self.player_colors):
             if not isinstance(rgb, str):
@@ -606,34 +608,64 @@ class CairoPainter:
         self.draw_line(-0.2 * ss, 0.3 * ss, -0.2 * ss, -0.3 * ss, self.rail_rgb, 0.2 * ss)
         self.end_transform_to_tile()
 
-    def draw_signal(self, cx, cy, fill_rgb, stroke_rgb):
+    def draw_signal(self, cx, cy, signal_era, signal_type):
         """
         Draw a railway signal for a given tile.
 
         :param cx: The x position of the signal.
-        :type cx: Float
+        :type cx: float
 
         :param cy: The y position of the signal.
-        :type cy: Float
+        :type cy: float
 
-        :param rgb: The fill color, expressed as a tuple in the range (0-255, 0-255, 0-255).
-        :type rgb: (integer, integer, integer).
+        :param signal_era: The era of the signal (0 for semaphone, 1 for electric).
+        :type signal_era: integer
 
-        :param rgb_stroke: The stroke color, expressed as a tuple in the range (0-255, 0-255, 0-255). Default is None.
-        :type rgb_stroke: (integer, integer, integer).
+        :param signal_type: The type of the signal.
+        :type signal_type: integer
         """
 
         ctx = self.context
         r = 0.1 * self.ss
         lw = 0.025 * self.ss
 
-        self.set_rgb(fill_rgb)
-        ctx.arc(cx, cy, r, 0, 2 * math.pi)
+        stroke_rgb = (0, 0, 0)
+        fill_rgbs = [
+           (255, 255, 255),  # Block signal.
+           (255, 255, 0),    # Pre signal.
+           (100, 100, 100),  # Exit signal.
+           (255, 255, 0),    # Combo signal.
+           (255, 0, 0),      # Path signal.
+           (255, 255, 255),  # One way path signal.
+        ]
+
+        self.set_rgb(fill_rgbs[signal_type])
+        if signal_era == 0:
+            ctx.arc(cx, cy, r, 0, 2 * math.pi)
+        else:
+            ctx.rectangle(cx - r, cy - r, 2 * r, 2 * r)
         ctx.fill()
 
+        if signal_type == 5:  # One way path signal.
+            self.set_rgb((255, 0, 0))
+            ctx.move_to(cx - r, cy)
+            ctx.line_to(cx + r, cy)
+            ctx.set_line_width(0.75 * r)
+            ctx.stroke()
+
+        elif signal_type == 3:  # Combo signal.
+            self.set_rgb((100, 100, 100))
+            ctx.move_to(cx, cy - r)
+            ctx.line_to(cx, cy + r)
+            ctx.set_line_width(0.75 * r)
+            ctx.stroke()
+
         self.set_rgb(stroke_rgb)
-        ctx.arc(cx, cy, r, 0, 2 * math.pi)
         ctx.set_line_width(lw)
+        if signal_era == 0:
+            ctx.arc(cx, cy, r, 0, 2 * math.pi)
+        else:
+            ctx.rectangle(cx - r, cy - r, 2 * r, 2 * r)
         ctx.stroke()
 
     def draw_rail_signals_tile(self, tile, rotation):
@@ -648,53 +680,53 @@ class CairoPainter:
         """
 
         ss = self.ss
-
-        self.transform_to_tile(tile, rotation)
-
-        rail = tile.occupant
-
-        fill_rgb = (0, 255, 0)
-        stroke_rgb = (0, 0, 0)
         d1 = 0.1 * ss
         d2 = 0.2 * ss
         d3 = 0.4 * ss
+        rail = tile.occupant
 
-        if rail.has_signals:
-            if rail.track_X:
-                if rail.signal_2_present:
-                    self.draw_signal(d3, -d2, fill_rgb, stroke_rgb)
-                if rail.signal_3_present:
-                    self.draw_signal(-d3, d2, fill_rgb, stroke_rgb)
+        s01e = rail.signal_01_era
+        s23e = rail.signal_23_era
+        s01t = rail.signal_01_type
+        s23t = rail.signal_23_type
 
-            if rail.track_Y:
-                if rail.signal_2_present:
-                    self.draw_signal(d2, d3, fill_rgb, stroke_rgb)
-                if rail.signal_3_present:
-                    self.draw_signal(-d2, -d3, fill_rgb, stroke_rgb)
+        self.transform_to_tile(tile, rotation)
 
-            if rail.track_W:
-                if rail.signal_2_present:
-                    self.draw_signal(-d3, -d3, fill_rgb, stroke_rgb)
-                if rail.signal_3_present:
-                    self.draw_signal(-d1, -d1, fill_rgb, stroke_rgb)
+        if rail.track_X:
+            if rail.signal_2_present:
+                self.draw_signal(d3, -d2, s23e, s23t)
+            if rail.signal_3_present:
+                self.draw_signal(-d3, d2, s23e, s23t)
 
-            if rail.track_E:
-                if rail.signal_0_present:
-                    self.draw_signal(d1, d1, fill_rgb, stroke_rgb)
-                if rail.signal_1_present:
-                    self.draw_signal(d3, d3, fill_rgb, stroke_rgb)
+        if rail.track_Y:
+            if rail.signal_2_present:
+                self.draw_signal(d2, d3, s23e, s23t)
+            if rail.signal_3_present:
+                self.draw_signal(-d2, -d3, s23e, s23t)
 
-            if rail.track_N:
-                if rail.signal_2_present:
-                    self.draw_signal(d3, -d3, fill_rgb, stroke_rgb)
-                if rail.signal_3_present:
-                    self.draw_signal(d1, -d1, fill_rgb, stroke_rgb)
+        if rail.track_W:
+            if rail.signal_2_present:
+                self.draw_signal(-d3, -d3, s23e, s23t)
+            if rail.signal_3_present:
+                self.draw_signal(-d1, -d1, s23e, s23t)
 
-            if rail.track_S:
-                if rail.signal_0_present:
-                    self.draw_signal(-0.1 * ss, 0.1 * ss, fill_rgb, stroke_rgb)
-                if rail.signal_1_present:
-                    self.draw_signal(-0.4 * ss, 0.4 * ss, fill_rgb, stroke_rgb)
+        if rail.track_E:
+            if rail.signal_0_present:
+                self.draw_signal(d1, d1, s01e, s01t)
+            if rail.signal_1_present:
+                self.draw_signal(d3, d3, s01e, s01t)
+
+        if rail.track_N:
+            if rail.signal_2_present:
+                self.draw_signal(d3, -d3, s23e, s23t)
+            if rail.signal_3_present:
+                self.draw_signal(d1, -d1, s23e, s23t)
+
+        if rail.track_S:
+            if rail.signal_0_present:
+                self.draw_signal(-d1, d1, s01e, s01t)
+            if rail.signal_1_present:
+                self.draw_signal(-d3, d3, s01e, s01t)
 
         self.end_transform_to_tile()
 
@@ -1609,6 +1641,8 @@ class CairoPainter:
         def process_tile(tile):
             self.draw_rail_signals_tile(tile, rotation=0)
 
+        tiles = [t for t in tiles if t.occupant.has_signals]
+
         if self.parent.show_progress_bar:
             with alive_bar(len(tiles)) as abar:
                 for tile in tiles:
@@ -2067,8 +2101,9 @@ class CairoPainter:
         self.log_message("Drawing road tiles.")
         self.draw_road_tile_lines(road_tiles, line_mode="outer")
 
-        self.log_message("Drawing rail tiles.")
-        self.draw_rail_tile_lines(rail_tiles, line_mode="outer")
+        if self.show_roads:
+            self.log_message("Drawing rail tiles.")
+            self.draw_rail_tile_lines(rail_tiles, line_mode="outer")
 
         self.log_message("Drawing station tiles.")
         self.draw_stations_with_lines(stations_tiles, all_tiles)
@@ -2085,8 +2120,9 @@ class CairoPainter:
         self.log_message("Drawing water tiles.")
         self.draw_water_tiles(water_tiles, all_tiles)
 
-        self.log_message("Drawing road tiles.")
-        self.draw_road_tile_lines(road_tiles, line_mode="inner")
+        if self.show_roads:
+            self.log_message("Drawing road tiles.")
+            self.draw_road_tile_lines(road_tiles, line_mode="inner")
 
         self.log_message("Drawing tram tiles.")
         self.draw_tram_tile_lines(road_tiles, line_mode="inner")
