@@ -54,18 +54,6 @@ class CairoPainter:
 
         self.parent.log_message(message)
 
-    def get_progress_bar(self, tiles):
-        """
-        Return a callback for a progress bar.
-
-        :param tiles: The list of all TileObjects in the map.
-        :type tiles: list of TileObject.
-        """
-
-        if self.parent.show_progress_bar:
-            return alive_bar(len(tiles))
-        return do_nothing
-
     def load_rgb(self, rgb_name, default_value):
         """
         Update the settings, given a config file path.
@@ -449,11 +437,14 @@ class CairoPainter:
                 self.maglev_rgb
             ]
         outer_rgb = outer_rgbs[track_type]
-        inner_rgb = self.player_colors[owner]
+        if owner is None:
+            inner_rgb = self.rail_rgb
+        else:
+            inner_rgb = self.player_colors[owner]
 
         if self.reverse_track_rgb:
+            outer_rgb = inner_rgb
             inner_rgb = outer_rgbs[track_type]
-            outer_rgb = self.player_colors[owner]
 
         if do_draw_outer:
             rgb = outer_rgb
@@ -1502,11 +1493,7 @@ class CairoPainter:
         :type tiles: list of TileObject.
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tile):
             h = tile.height
             h_index = (h - self.parent.min_height) / (self.parent.max_height - self.parent.min_height)
 
@@ -1563,6 +1550,15 @@ class CairoPainter:
                 if not rail.is_depot:
                     self.draw_rail_background(tile)
 
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile)
+
     def draw_rail_tile_lines(self, tiles, line_mode):
         """
         Draw the rail lines.
@@ -1574,11 +1570,7 @@ class CairoPainter:
         :type line_mode: Boolean
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tile, line_mode):
             rail = tile.occupant
 
             if rail.is_depot:
@@ -1597,6 +1589,15 @@ class CairoPainter:
                 if rail.track_E:
                     self.draw_rail_E(tile, line_mode=line_mode)
 
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile, line_mode)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile, line_mode)
+
     def draw_rail_signals(self, tiles):
         """
         Draw the rail lines.
@@ -1605,12 +1606,17 @@ class CairoPainter:
         :type tiles: list of TileObject.
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tile):
             self.draw_rail_signals_tile(tile, rotation=0)
+
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile)
 
     def draw_road_tile_lines(self, tiles, line_mode):
         """
@@ -1620,11 +1626,7 @@ class CairoPainter:
         :type tiles: list of TileObject.
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tile, line_mode):
             road = tile.occupant
 
             if road.is_depot:
@@ -1664,6 +1666,15 @@ class CairoPainter:
                 if road.road_SW and road.road_NE:
                     self.draw_road_NE_to_SW(tile, line_mode)
 
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile ,line_mode)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile, line_mode)
+
     def draw_tram_tile_lines(self, tiles, line_mode):
         """
         Draw the tram lines.
@@ -1672,18 +1683,14 @@ class CairoPainter:
         :type tiles: list of TileObject.
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tiles, line_mode):
             road = tile.occupant
 
             if road.is_depot:
-                continue
+                return
 
             elif road.is_level_crossing:
-                continue
+                return
 
             else:
                 if road.tram_NW:
@@ -1694,6 +1701,15 @@ class CairoPainter:
                     self.draw_tram_SE(tile, line_mode)
                 if road.tram_NE:
                     self.draw_tram_NE(tile, line_mode)
+
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile, line_mode)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile, line_mode)
 
     def draw_stations_with_lines(self, tiles, all_tiles, line_mode="both"):
         """
@@ -1709,11 +1725,7 @@ class CairoPainter:
         :type line_mode: Boolean
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tile, all_tiles, line_mode):
             station = tile.occupant
             self.draw_station_edges(tile, all_tiles)
 
@@ -1765,11 +1777,7 @@ class CairoPainter:
                     self.draw_rail_Y(tile, line_mode="inner")
 
         # Draw tram lines last, to make sure they fit over the roads.
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile_tram(tile, all_tiles):
             station = tile.occupant
 
             if station.station_type in [2, 3]:
@@ -1786,6 +1794,24 @@ class CairoPainter:
                     if station.road_NE:
                         self.draw_tram_NE(tile, line_mode="both")
 
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile, all_tiles, line_mode)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile, all_tiles, line_mode)
+
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile_tram(tile, all_tiles)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile_tram(tile, all_tiles)
+
     def draw_tunnel_mouths_and_bridge_ramps(self, tiles):
         """
         Draw the tunnel mouths and bridge ramps.
@@ -1794,11 +1820,7 @@ class CairoPainter:
         :type tiles: list of TileObject.
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tile):
             torb = tile.occupant
 
             if torb.is_tunnel:
@@ -1812,6 +1834,15 @@ class CairoPainter:
                 elif torb.payload_kind == 1:
                     self.draw_road_bridge_ramp(tile, torb.entrance_direction)
 
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile)
+
     def draw_bridges_over(self, tiles):
         """
         Draw the bridges over tiles, where they exist.
@@ -1820,13 +1851,19 @@ class CairoPainter:
         :type tiles: list of TileObject.
         """
 
-        abar = self.get_progress_bar(tiles)
+        def process_tile(tile):
+            if not tile.bridge:
+                return
+            self.draw_unknown_bridge_over(tiles, tile, tile.bridge - 1)
 
-        for tile in tiles:
-            abar()
-
-            if tile.bridge:
-                self.draw_unknown_bridge_over(tiles, tile, tile.bridge - 1)
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile)
 
     def draw_industry_tiles(self, tiles, all_tiles):
         """
@@ -1839,12 +1876,17 @@ class CairoPainter:
         :type all_tiles: list of TileObject.
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tile, all_tiles):
             self.draw_industry_edges(tile, all_tiles)
+
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile, all_tiles)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile, all_tiles)
 
     def draw_water_tiles(self, tiles, all_tiles):
         """
@@ -1857,12 +1899,17 @@ class CairoPainter:
         :type all_tiles: list of TileObject.
         """
 
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
-
+        def process_tile(tile, all_tiles):
             self.draw_water_edges(tile, all_tiles)
+
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile, all_tiles)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile, all_tiles)
 
     def draw_building_tiles(self, tiles):
         """
@@ -1872,18 +1919,23 @@ class CairoPainter:
         :type tiles: list of TileObject.
         """
 
-        d = 0.3 * self.ss
-
-        abar = self.get_progress_bar(tiles)
-
-        for tile in tiles:
-            abar()
+        def process_tile(tile):
+            d = 0.3 * self.ss
 
             self.transform_to_tile(tile, 0)
 
             self.draw_rectangle(-d, -d, 2 * d, 2 * d, self.town_building_rgb)
 
             self.end_transform_to_tile()
+
+        if self.parent.show_progress_bar:
+            with alive_bar(len(tiles)) as abar:
+                for tile in tiles:
+                    process_tile(tile)
+                    abar()
+        else:
+            for tile in tiles:
+                process_tile(tile)
 
     def draw_label(self, text, font_size, cx, cy):
         """

@@ -241,7 +241,11 @@ class TileOccupantIndustry(TileOccupant):
     def parse_all(self):
         """Parse the various properties of the TileOccupant."""
 
-        self.industry_type = INDUSTRY_TYPES[self.parse_map_bits(b'MAP5', 0, 8)]
+        try:
+            self.industry_type = INDUSTRY_TYPES[self.parse_map_bits(b'MAP5', 0, 8)]
+        except:
+            self.industry_type = "OTHER_INDUSTRY"
+
         self.industry_id = self.parse_map_bits(b'MAP2', 0, 8)
 
 

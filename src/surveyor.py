@@ -2,6 +2,8 @@ import datetime
 import logging
 import lzma
 
+from alive_progress import alive_bar
+
 from tile import TileObject
 from tile_grid import TileGrid
 from cairo_painter import CairoPainter
@@ -123,8 +125,15 @@ class Surveyor:
             [self.tiles[i].set_map_bytes(map_name, tbs[i * m:(i + 1) * m]) for i in range(n_tiles)]
 
         self.log_message("Parsing tile bits...")
-        for tile in self.tiles:
-            tile.parse_all()
+
+        if self.show_progress_bar:
+            with alive_bar(len(self.tiles)) as abar:
+                for tile in self.tiles:
+                    tile.parse_all()
+                    abar()
+        else:
+            for tile in self.tiles:
+                tile.parse_all()
         self.log_message("All done!")
 
         heights = [tile.height for tile in self.tiles]
