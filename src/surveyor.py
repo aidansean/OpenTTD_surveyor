@@ -40,6 +40,11 @@ class Surveyor:
         self.log_message(f"Save file version: {self.file_version}")
         if self.file_version > 34:
             self.log_message(
+                f"Detected save file version higher than 34. Verify if map size is correct.",
+                level=logging.WARNING
+            )
+        if self.file_version > 46:
+            self.log_message(
                 f"The save file version ({self.file_version}) may not be compatible.",
                 level=logging.WARNING
             )
@@ -88,11 +93,21 @@ class Surveyor:
         return int.from_bytes(self.data[offset:offset + n_bytes], 'big')
 
     def parse_size(self):
-        """Parse the size of the maps."""
+        """
+        Parse the size of the maps.
+        Somwehere between version 34 and 46, the size of the map changed its location.
+        If strange map sizes appear, lower number in file_version check.
+        """
+
+        offsetcols = 22
+        offsetrows = 26
+        if self.file_version < 46:
+            offsetcols = 8
+            offsetrows = 12
 
         MAPS_start = self.data.find(b"MAPS")
-        self.ncols = self.get_int(MAPS_start + 8, 4)
-        self.nrows = self.get_int(MAPS_start + 12, 4)
+        self.ncols = self.get_int(MAPS_start + offsetcols, 4)
+        self.nrows = self.get_int(MAPS_start + offsetrows, 4)
         self.log_message(f"Map size: {self.nrows} x {self.ncols}")
 
     def make_tiles(self):
